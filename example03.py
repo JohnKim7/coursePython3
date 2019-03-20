@@ -5,9 +5,24 @@
     '''
 
 from tkinter import *
+import random
 
-def dump(*args):
-    print("DUMP:",args)
+def load_colors(filepath):
+    with open(filepath) as f:
+        return [l.split()[3] for l in f.readlines()]
+
+def repaint(label):
+    # tkinter doesn't know about some colors
+    ex = True
+    while ex:
+        try:
+            label.configure(
+                            fg=random.sample(colors, 1),
+                            bg=random.sample(colors, 1)
+                            )
+            ex = False
+        except TclError:
+            ex = True
 
 def add_button_label(*args):
     global column_num
@@ -17,6 +32,10 @@ def add_button_label(*args):
     l = Label(root, text="L")
     l.grid(row=0, column=column_num, rowspan=3, sticky=E+W+S+N)
     column_num += 1
+    b.configure(command = lambda label=l : repaint(l) )
+
+
+colors = load_colors("rgb.txt")
 
 TKroot = Tk()
 TKroot.title("Hello")
